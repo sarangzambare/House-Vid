@@ -23,12 +23,12 @@ public class PopUp {
 		anim =  new ScaleAnimation(0f,1.0f,0f,1.0f,0.5f,0.5f);
 		anim.setDuration(1000);
 		button = new Button(MainActivity.getContext());
-		button.setText("Hey");
+		button.setText(title);
 		button.setBackgroundResource(R.drawable.buttonshape);
 		button.startAnimation(anim);
 		params = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-		params.leftMargin = toPx(x);
-		params.topMargin = toPx(y - 50);
+		params.leftMargin = x;
+		params.topMargin = y;
 		
 		layout.addView(button, params);
 		
@@ -55,5 +55,9 @@ public class PopUp {
 
 		Resources r = MainActivity.res;
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+	}
+	
+	public void dispose(){
+		layout.removeView(button);
 	}
 }
