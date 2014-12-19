@@ -5,10 +5,11 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,29 +17,39 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	int offsetY = 0;
+	DisplayMetrics dm;
+	
 	static ImageView im;
 	static AssetManager assets;
 	static Resources res;
 	Animation360 animation;
 	Button next;
 	Button prev;
-	
+	Button btn;
+	static ArrayList<Integer> indicesToStop;
 
 	Animation anim;
+	int screenHeight;
 	PopUp pop;
 	Button button;
 	static Context context;
@@ -53,9 +64,12 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		context = getApplicationContext();
-		
+		indicesToStop = makeIndicesToStopList("config.txt");
 		res = getResources();
+		dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		setContentView(R.layout.activity_main);
+		btn = (Button) findViewById(R.id.buttonKuch);
 		layout = (FrameLayout) findViewById(R.id.frameLayout1);
 		next = (Button) findViewById(R.id.buttonNext);
 		prev = (Button) findViewById(R.id.buttonPrev);
@@ -82,6 +96,8 @@ public class MainActivity extends Activity {
 				return true;
 			}
 		});
+		
+		
 
 		prev.setOnTouchListener(new OnTouchListener() {
 
@@ -103,12 +119,14 @@ public class MainActivity extends Activity {
 		
 		
 		
-		
-
-	}
+}
 
 
 	
+	
+
+
+
 	public static Context getContext(){
 		return context;
 	}
@@ -132,13 +150,37 @@ public class MainActivity extends Activity {
 		Runnable mLongPressed = new Runnable() { 
 			
 		    public void run() { 
-		        try {
-					writeConfig(Variables.index,x,y,"tag");
+		        
+		        	//pop window
+		        	LayoutInflater inflator = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+		        	final View popupview = inflator.inflate(R.layout.layout_dialog, null);
+		        final 	PopupWindow popupWindow = new PopupWindow(popupview,LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		        popupWindow.showAsDropDown(im,x,y - dm.heightPixels);
+		        popupWindow.setFocusable(true);
+	        		popupWindow.update();
+	        		
+	        		Button btn = (Button) popupview.findViewById(R.id.doneButton);
+	        		btn.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							EditText et = (EditText) popupview.findViewById(R.id.popup_et);
+							String tagi = et.getText().toString();
+							try {
+								writeConfig(Variables.index,x,y,tagi);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							popupWindow.dismiss();
+							
+						}
+					});
+		        	
+	        		
+					
 					Log.i(SEARCH_SERVICE,"Write done!");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				 
 		    }   
 		};
 		final Handler handler = new Handler();
@@ -164,7 +206,7 @@ public class MainActivity extends Activity {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 	 
 		
-			bw.write(index + ";" + x + ";" + y + ";" + "tag");
+			bw.write(index + ";" + x + ";" + y + ";" + tag);
 			bw.newLine();
 		
 	 Log.i(STORAGE_SERVICE, "File Write Done!");
@@ -173,10 +215,12 @@ public class MainActivity extends Activity {
 	
 	public void showTrial(View v){
 		try {
+		 
 			FileInputStream fos = openFileInput("config.txt");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fos));
 			try {
-				Toast t = Toast.makeText(getBaseContext(), br.readLine(), Toast.LENGTH_SHORT);
+				
+				Toast t = Toast.makeText(getBaseContext(),br.readLine() , Toast.LENGTH_SHORT);
 				t.show();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -187,5 +231,46 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
 	}
+	
+	public ArrayList<Integer> makeIndicesToStopList(String configFileName){
+		ArrayList<Integer> indicesToStop = new ArrayList<Integer>();
+		try {
+			FileInputStream fis = openFileInput(configFileName);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			String line;
+			while((line = br.readLine()) != null){
+				indicesToStop.add(Integer.parseInt(line.split(";")[0]));
+			}
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		return indicesToStop;
+	}
+	
+	public static  boolean checkStopage(ArrayList<Integer> indices,int index){
+		int i = 0;
+		Iterator<Integer> iterator = indices.iterator();
+		while(iterator.hasNext()){
+			if(iterator.next() == index){
+				return true;
+			}
+		}
+		return false;
+		
+		
+	}
+	
+
+	
+	
 }

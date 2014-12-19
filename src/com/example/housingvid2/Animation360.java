@@ -1,17 +1,26 @@
 package com.example.housingvid2;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.app.Activity;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Handler;
 import android.widget.ImageView;
 
-public class Animation360 {
+public class Animation360 extends Activity{
 	ImageView im;
 	String iniPath;
+	String line = "";
+	ArrayList<Point> popPoints;
 	int noOfFrames;
+	MainActivity main;
 	boolean killRunnable = false;
 	Handler handler;
 	Runnable playfor;
@@ -24,11 +33,12 @@ public class Animation360 {
 	
 
 	public Animation360(ImageView img, String inipath, int noofframes) {
+		main = new MainActivity();
 		this.im = img;
 		this.iniPath = inipath;
 		this.noOfFrames = noofframes;
 		pops = new ArrayList<PopUp>();
-		
+		popPoints = new ArrayList<Point>();
 		handler = new Handler();
 		playfor = new Runnable() {
 
@@ -64,21 +74,46 @@ public class Animation360 {
 					Variables.index = 221;
 				}
 
-				if (!killRunnable && playForBool && !(Variables.index==310)) {
+				if (!killRunnable && playForBool && !MainActivity.checkStopage(MainActivity.indicesToStop,Variables.index)) {
+					removePops(pops);
 					im.postDelayed(this, 50);
 					
+				}
+				else{
+					
+					try {
+						FileInputStream fis = MainActivity.getContext().openFileInput("config.txt");
+						BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+						while((line = br.readLine()) != null){
+							if(Integer.parseInt(line.split(";")[0]) == Variables.index){
+								//popPoints.add(new Point(Integer.parseInt(line.split(";")[1]),Integer.parseInt(line.split(";")[2])));
+								pops.add(new PopUp(line.split(";")[3],Integer.parseInt(line.split(";")[1])+20,Integer.parseInt(line.split(";")[2])-70));
+								
+							}
+						}
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+						
 				}
 
 			
 				
-				if(Variables.index == 310){
-					pops.add(new PopUp("TV",100,200));
-				}
-				else{
-					if(!isNull(pops)){
-						removePops(pops);
-					}
-				}
+//				if(Variables.index == 310){
+//					pops.add(new PopUp("TV",100,200));
+//				}
+//				else{
+//					if(!isNull(pops)){
+//						removePops(pops);
+//					}
+//				}
 				
 				
 				
@@ -122,20 +157,20 @@ public class Animation360 {
 					Variables.index = noOfFrames;
 				}
 
-				if (!killRunnable && playRevBool && !(Variables.index==310)) {			//Implement checkStopage() function here.
+				if (!killRunnable && playRevBool && !MainActivity.checkStopage(MainActivity.indicesToStop,Variables.index) ) {			//Implement checkStopage() function here.
 					im.postDelayed(this, 50);
 
 				}
 				
-				if(Variables.index == 310){
-					pops.add(new PopUp("TV",100,200));
-				}
-				else{
-					if(!isNull(pops)){
-						removePops(pops);
-					}
-				}
-				
+//				if(Variables.index == 310){
+//					pops.add(new PopUp("TV",100,200));
+//				}
+//				else{
+//					if(!isNull(pops)){
+//						removePops(pops);
+//					}
+//				}
+//				
 				
 			
 
@@ -191,14 +226,7 @@ public class Animation360 {
 		}
 	}
 	
-	public void checkStopage(){
-	
-		// make an array that stores all the stopage indices.
-		// Iterate through the array and check whether the current index is stopage index.
-		// return true for if its stopage.
-		// mostly the array will be filled up with points from a config file, which will be mostly a text file, (config file);
-		
-	}
+
 
 	
 

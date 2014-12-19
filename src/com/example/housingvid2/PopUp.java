@@ -1,6 +1,7 @@
 package com.example.housingvid2;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -25,6 +26,8 @@ public class PopUp {
 		button = new Button(MainActivity.getContext());
 		button.setText(title);
 		button.setBackgroundResource(R.drawable.buttonshape);
+		button.setAlpha(0.35f);
+		button.setTextColor(Color.BLACK);
 		button.startAnimation(anim);
 		params = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
 		params.leftMargin = x;
