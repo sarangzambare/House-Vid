@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 
+import com.android.volley.toolbox.ImageRequest;
+
 public class PopUp {
 
 	Button button;
@@ -23,6 +25,7 @@ public class PopUp {
 		layout = MainActivity.layout;
 		anim =  new ScaleAnimation(0f,1.0f,0f,1.0f,0.5f,0.5f);
 		anim.setDuration(1000);
+		
 		button = new Button(MainActivity.getContext());
 		button.setText(title);
 		button.setBackgroundResource(R.drawable.buttonshape);

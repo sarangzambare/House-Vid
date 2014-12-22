@@ -10,11 +10,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -38,7 +40,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	int offsetY = 0;
 	DisplayMetrics dm;
-	
+	int point = 0;
 	static ImageView im;
 	static AssetManager assets;
 	static Resources res;
@@ -77,7 +79,7 @@ public class MainActivity extends Activity {
 		im = (ImageView) findViewById(R.id.imageView1);
 		im.setScaleType(ScaleType.FIT_XY);
 		animation = new Animation360(im,
-				"www.icreate3d.com - iCreate 3D House Walkthrough (1)_", 528);
+				"2010 New Home Collection - 3D Home Tour_", 380);
 		
 		next.setOnTouchListener(new OnTouchListener() {
 
@@ -268,6 +270,36 @@ public class MainActivity extends Activity {
 		return false;
 		
 		
+	}
+	
+	public void JumpToNext(View v){
+		if(point > indicesToStop.size()-1){
+			point = 0;
+		}
+		Variables.index = indicesToStop.get(point);
+		try {
+			if (Variables.index <= 9)
+				im.setImageBitmap(BitmapFactory
+						.decodeStream(MainActivity.assets.open("2010 New Home Collection - 3D Home Tour_"
+								+ "00" + Variables.index + ".jpeg")));
+
+			if (Variables.index > 9 && Variables.index <= 99)
+				im.setImageBitmap(BitmapFactory
+						.decodeStream(MainActivity.assets.open("2010 New Home Collection - 3D Home Tour_"
+								+ "0" + Variables.index + ".jpeg")));
+			if (Variables.index > 99 && Variables.index <= 999)
+				im.setImageBitmap(BitmapFactory
+						.decodeStream(MainActivity.assets.open("2010 New Home Collection - 3D Home Tour_"
+								 + Variables.index + ".jpeg")));
+			else
+				im.setImageBitmap(BitmapFactory
+						.decodeStream(MainActivity.assets.open("2010 New Home Collection - 3D Home Tour_"
+								+ Variables.index + ".jpeg")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		point++;
 	}
 	
 

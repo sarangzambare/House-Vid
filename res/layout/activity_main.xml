@@ -32,6 +32,6 @@
             android:layout_height="wrap_content"
             android:text="Button"
             android:layout_gravity="top"
-            android:onClick="showTrial" />
+            android:onClick="JumpToNext" />
 
 </FrameLayout>

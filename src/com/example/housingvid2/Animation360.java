@@ -48,16 +48,16 @@ public class Animation360 extends Activity{
 					if (Variables.index <= 9)
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
-										+ "000" + Variables.index + ".jpeg")));
+										+ "00" + Variables.index + ".jpeg")));
 
 					if (Variables.index > 9 && Variables.index <= 99)
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
-										+ "00" + Variables.index + ".jpeg")));
+										+ "0" + Variables.index + ".jpeg")));
 					if (Variables.index > 99 && Variables.index <= 999)
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
-										+ "0" + Variables.index + ".jpeg")));
+										 + Variables.index + ".jpeg")));
 					else
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
@@ -71,7 +71,7 @@ public class Animation360 extends Activity{
 				Variables.index++;
 				
 				if(Variables.index > noOfFrames){
-					Variables.index = 221;
+					Variables.index = 100;		// Ideally this should be 0 
 				}
 
 				if (!killRunnable && playForBool && !MainActivity.checkStopage(MainActivity.indicesToStop,Variables.index)) {
@@ -87,7 +87,7 @@ public class Animation360 extends Activity{
 						while((line = br.readLine()) != null){
 							if(Integer.parseInt(line.split(";")[0]) == Variables.index){
 								//popPoints.add(new Point(Integer.parseInt(line.split(";")[1]),Integer.parseInt(line.split(";")[2])));
-								pops.add(new PopUp(line.split(";")[3],Integer.parseInt(line.split(";")[1])+20,Integer.parseInt(line.split(";")[2])-70));
+								pops.add(new PopUp(line.split(";")[3],Integer.parseInt(line.split(";")[1])+20,Integer.parseInt(line.split(";")[2])-70)); // tHE +20 and -70 account for error in finger pointing.
 								
 							}
 						}
@@ -132,16 +132,16 @@ public class Animation360 extends Activity{
 					if (Variables.index <= 9)
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
-										+ "000" + Variables.index + ".jpeg")));
+										+ "00" + Variables.index + ".jpeg")));
 
 					if (Variables.index > 9 && Variables.index <= 99)
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
-										+ "00" + Variables.index + ".jpeg")));
+										+ "0" + Variables.index + ".jpeg")));
 					if (Variables.index > 99 && Variables.index <= 999)
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
-										+ "0" + Variables.index + ".jpeg")));
+										 + Variables.index + ".jpeg")));
 					else
 						im.setImageBitmap(BitmapFactory
 								.decodeStream(MainActivity.assets.open(iniPath
@@ -153,13 +153,38 @@ public class Animation360 extends Activity{
 				}
 				Variables.index--;
 				
-				if(Variables.index < 221){
+				if(Variables.index < 100){			//ideally this should be 0;
 					Variables.index = noOfFrames;
 				}
 
 				if (!killRunnable && playRevBool && !MainActivity.checkStopage(MainActivity.indicesToStop,Variables.index) ) {			//Implement checkStopage() function here.
+					removePops(pops);
 					im.postDelayed(this, 50);
 
+				}
+				else{
+					
+					try {
+						FileInputStream fis = MainActivity.getContext().openFileInput("config.txt");
+						BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+						while((line = br.readLine()) != null){
+							if(Integer.parseInt(line.split(";")[0]) == Variables.index){
+								//popPoints.add(new Point(Integer.parseInt(line.split(";")[1]),Integer.parseInt(line.split(";")[2])));
+								pops.add(new PopUp(line.split(";")[3],Integer.parseInt(line.split(";")[1])+20,Integer.parseInt(line.split(";")[2])-70)); // tHE +20 and -70 account for error in finger pointing.
+								
+							}
+						}
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+						
 				}
 				
 //				if(Variables.index == 310){
