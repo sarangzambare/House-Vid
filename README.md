@@ -12,5 +12,7 @@ The images used were provided by Housing.com camera crew. So far, we only manage
 At the heart of the program, it uses sterescopic vision to ascertain depth from 2D images from multiple known perspectives.
 Most of the time was utilised in animating the generated photo sequence, rather than coding the logic.
 
+The original program was written in Java, and hence I tried porting it to android.
+
 
 ## Update: I have stopped working on this repository.
